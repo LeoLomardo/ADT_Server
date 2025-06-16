@@ -16,7 +16,6 @@ void send_hl7_message(int client_sock, const char* message) {
     memcpy(&envelope[1], message, message_len); // mensagem HL7
     envelope[message_len + 1] = 0x1C;           // FS
     envelope[message_len + 2] = 0x0D;           // CR
-
     printf("Pacote HL7 enviado (hex): ");
     for (int i = 0; i < total_len; i++) {
         printf("%02X ", (unsigned char)envelope[i]);
@@ -67,7 +66,7 @@ void start_hl7_server() {
 
         printf("Conexão estabelecida: %s\n", inet_ntoa(client_addr.sin_addr));
 
-        FILE* file = fopen("mensagens/adt_patient.hl7", "r");
+        FILE* file = fopen("mensagens/gemini.hl7", "r");
         if (!file) {
             perror("Falha ao abrir mensagem HL7");
             close(client_sock);
@@ -76,10 +75,20 @@ void start_hl7_server() {
 
         char message[2048];
         size_t read_size = fread(message, 1,sizeof(message)-1, file);
-        message[read_size] ='\0'; // Null-terminate the string
+        message[read_size] ='\0'; 
         fclose(file);
 
         send_hl7_message(client_sock, message);
+
+        char buffer[1024];
+        int bytes_received = recv(client_sock, buffer, sizeof(buffer) - 1, 0);
+        if (bytes_received > 0) {
+            buffer[bytes_received] = '\0';
+            printf("ACK recebido: %s\n", buffer);
+        } else {
+            printf("Nenhum ACK recebido.\n");
+}
+
         // printf("Enviando mensagem HL7:\n%s\n", message);
         printf("Mensagem HL7 enviada!\n");
 
