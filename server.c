@@ -66,7 +66,7 @@ void start_hl7_server() {
 
         printf("Conexão estabelecida: %s\n", inet_ntoa(client_addr.sin_addr));
 
-        FILE* file = fopen("mensagens/gemini.hl7", "r");
+        FILE* file = fopen("mensagens/gpt3.hl7", "r");
         if (!file) {
             perror("Falha ao abrir mensagem HL7");
             close(client_sock);
@@ -76,6 +76,9 @@ void start_hl7_server() {
         char message[2048];
         size_t read_size = fread(message, 1,sizeof(message)-1, file);
         message[read_size] ='\0'; 
+        for (int i = 0; message[i]; i++) {
+            if (message[i] == '\n') message[i] = '\r';
+        }
         fclose(file);
 
         send_hl7_message(client_sock, message);
@@ -85,6 +88,11 @@ void start_hl7_server() {
         if (bytes_received > 0) {
             buffer[bytes_received] = '\0';
             printf("ACK recebido: %s\n", buffer);
+            printf("HEX: ");
+            for (int i = 0; i < bytes_received; i++) {
+                printf("%02X ", (unsigned char)buffer[i]);
+            }
+            printf("\n");
         } else {
             printf("Nenhum ACK recebido.\n");
 }
