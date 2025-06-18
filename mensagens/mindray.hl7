@@ -1,0 +1,10 @@
+MSH|^~\&|Mindray|ADTServerDemo|||||ADT^A01|1|P|2.3.1| <CR>
+EVN|A01| <CR>
+PID||2|M0925_00009||family name^first
+name||20090925|F|||address^^^^post code||telephone| <CR>
+PV1||I|^^department&6&&&0||||doctor|||||||||||N|||||||||||||||
+|||||||||||20090925000000 <CR>
+OBX||NM|52^Height||200.0||||||F <CR>
+OBX||NM|51^Weight||62.0||||||F <CR>
+OBX||CE|2302^BloodType||3^||||||F <CR>
+OBX||CE|2303^PACE_Switch||1^||||||F <CR> 

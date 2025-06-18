@@ -5,7 +5,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
-#define ARQUIVO "mensagens/gpt3.hl7"
+#define ARQUIVO "mensagens/mindray.hl7"
 void send_hl7_message(int client_sock, const char* message) {
     int message_len = strlen(message);
     int total_len = message_len + 3; 

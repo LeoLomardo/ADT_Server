@@ -1,0 +1,47 @@
+Certificados TLS e Configuração de Segurança no Monitor Mindray BeneVision N15
+Requisitos de Certificado TLS para Conexões ADT/HL7 Seguras
+Os monitores BeneVision N15 suportam conexões seguras via TLS (equiparado a SSL no manual) para comunicação HL7/ADT com sistemas hospitalares. Não há exigência de que o certificado TLS seja “assinado pela Mindray” especificamente – o monitor pode utilizar certificados personalizados (incluindo autoassinados), desde que o certificado da autoridade emissora (ou o próprio certificado autoassinado) esteja confiável no dispositivo. O manual oficial indica que o usuário pode importar certificados para a memória do monitor e selecionar um certificado CA (autoridade certificadora) importado para validar conexões seguras
+scribd.com
+manualzz.com
+. Em outras palavras, é possível usar um certificado autoassinado do servidor ADT, contanto que você importe esse certificado (ou o da CA interna do hospital) no armazenamento do monitor, permitindo que ele o reconheça como confiável. Não há menção em documentação oficial de que os certificados precisem ser emitidos pela Mindray, apenas que devem ser importados/instalados apropriadamente para que a conexão TLS funcione. Adicionalmente, a Mindray destaca que seus monitores e gateways suportam padrões de segurança modernos. Por exemplo, a documentação de segurança da Mindray afirma que as interfaces HL7 adotam criptografia TLS 1.2 com AES-256
+manualzz.com
+, garantindo um alto nível de segurança no tráfego de dados. Assim, usar TLS nas conexões de ADT é suportado e recomendado, não importando se o certificado foi emitido por uma CA pública, pela própria instituição de saúde ou até mesmo autoassinado – o importante é que o monitor possua o certificado necessário em seu repositório de confiança para validar o servidor.
+Configuração de TLS e Certificados no BeneVision N15
+Para configurar o TLS/SSL no monitor BeneVision N15, é necessário acessar as definições avançadas de rede no próprio monitor (via interface de manutenção). Os passos gerais são os seguintes:
+Acessar o menu de manutenção: No monitor N15, selecione Main Menu → Maintenance (será solicitada a senha de usuário técnico/administrador). Em seguida, navegue até a seção Network Setup (configuração de rede).
+Ativar criptografia TLS: Na aba Information Security dentro de Network Setup, localize a opção Encryption Connection Type (Tipo de Conexão Criptografada). Você poderá selecionar entre Only Private Encryption (que usa um algoritmo proprietário da Mindray) ou SSL Encryption Priority (que dá preferência à criptografia SSL/TLS padrão)
+manualzz.com
+. Para habilitar TLS nas comunicações (incluindo com o servidor ADT), escolha SSL Encryption Priority. Dessa forma, o monitor usará TLS/SSL quando se conectar a dispositivos/servidores que o suportem
+manualzz.com
+. (Observação: “SSL” no contexto do manual refere-se ao uso de TLS, já que versões recentes adotam TLS 1.2).
+Importar certificados TLS: Caso o servidor ADT (ou o eGateway da Mindray) utilize um certificado não reconhecido pelo monitor (por exemplo, um certificado autoassinado ou emitido por uma CA privada do hospital), será preciso importar o certificado para o monitor. No menu Network Setup, abra a aba WLAN (mesmo para conexões cabeadas, é nessa tela que fica a gestão de certificados). No canto inferior esquerdo desta tela, selecione Certificate Management (Gerenciamento de Certificados)
+manualzz.com
+. A interface exibirá duas guias: Local (certificados já armazenados no monitor) e USB Drive (para ler certificados a partir de um pen drive USB). Utilize a guia USB para selecionar o arquivo de certificado (formato compatível, por ex. PEM/DER) e toque em Import para importá-lo
+manualzz.com
+. O certificado importado passará a constar na lista Local. Você pode importar tanto certificados de CA (certificados raiz ou intermediários) quanto certificados de cliente, se necessário. Após a importação, o certificado de CA apropriado deve ser selecionado/associado nas configurações relevantes – por exemplo, ao configurar Wi-Fi com EAP-TLS ou outras funções, o sistema permitirá escolher o “CA Certificate” a partir dos certificados importados
+scribd.com
+. No caso do TLS para o servidor ADT, o monitor usará automaticamente os certificados CA armazenados para validar a cadeia do certificado apresentado pelo servidor durante o handshake TLS.
+Configurar o servidor ADT (HL7): Ainda em Network Setup, abra a aba ADT. Nessa tela, insira o endereço IP ou nome de host do gateway ADT e a porta de comunicação utilizada
+manualzz.com
+. (Nota: O “ADT Gateway” normalmente é implementado via o software Mindray eGateway, que atua como ponte HL7 entre os monitores e o sistema HIS/EMR
+manualzz.com
+. Portanto, geralmente aqui você apontará o IP/porta do eGateway ou outro servidor intermediário que receba/envie as mensagens HL7). Certifique-se de habilitar a função ADT Query (consulta ADT) – por padrão ela vem desativada. Ao ativá-la, o monitor poderá consultar/adquirir automaticamente dados demográficos de pacientes a partir do servidor ADT
+manualzz.com
+. Depois de inserir os dados do servidor, use o botão Network Test para verificar a conectividade segura com o gateway ADT
+manualzz.com
+. Se o certificado do servidor não estiver confiável (por não ter sido importado ou válido), o teste de conexão segura poderá falhar, indicando problema de certificado.
+Envio de dados HL7 do monitor: Opcionalmente, os monitores BeneVision N15 também podem enviar dados de pacientes, sinais vitais em tempo real, e alarmes via protocolo HL7 para servidores externos (por exemplo, para integração com prontuário eletrônico). Essa configuração fica na aba HL7 Configuration em Network Setup. Nela é possível configurar endereços IP/porta de servidores receptores para dados em tempo real, ondas e alarmes
+manualzz.com
+manualzz.com
+. Assim como no caso do ADT, essas transmissões podem ser protegidas por TLS se o Encryption Connection Type estiver ajustado para SSL/TLS. Não há um campo separado para certificado nessa tela – a segurança está vinculada à configuração global de criptografia e aos certificados importados no monitor.
+Em resumo, o BeneVision N15 aceita certificados TLS autoassinados ou de qualquer autoridade, desde que você os importe no monitor para que sejam confiáveis. A configuração das opções TLS é feita através do menu de manutenção do monitor: ajustando o tipo de conexão criptografada para SSL/TLS e importando os certificados necessários na seção de gerenciamento de certificados
+manualzz.com
+. A integração ADT/HL7 segura geralmente envolve usar o Mindray eGateway como intermediário, configurando no monitor o endereço/porta do eGateway e habilitando a consulta ADT
+manualzz.com
+manualzz.com
+. Seguindo a documentação oficial da Mindray e de integradores, é possível estabelecer conexões HL7 criptografadas com sucesso – sem a necessidade de certificados “oficiais” da Mindray, mas sim com certificados apropriados configurados pelo próprio hospital ou integrador, inclusive autoassinados quando devidamente importados no dispositivo. Referências: As informações acima foram compiladas de manuais técnicos oficiais da Mindray (Manual do Operador e Manual de Serviço do BeneVision N-Series) e documentos de segurança da Mindray, que detalham o suporte a TLS e o procedimento de configuração de certificados nos monitores N15
+scribd.com
+manualzz.com
+manualzz.com
+manualzz.com
+. Essas fontes confirmam a capacidade do monitor de usar TLS 1.2 padrão para HL7 e descrevem os menus onde ajustar a criptografia e gerenciar certificados. Em caso de dúvidas adicionais, a Mindray recomenda consultar o guia de integração (eGateway/HL7) ou o suporte técnico para melhores práticas na implantação de certificados em seu ambiente.
