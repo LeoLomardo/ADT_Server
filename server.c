@@ -5,6 +5,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 
+#define ARQUIVO "mensagens/gpt3.hl7"
 void send_hl7_message(int client_sock, const char* message) {
     int message_len = strlen(message);
     int total_len = message_len + 3; 
@@ -66,7 +67,7 @@ void start_hl7_server() {
 
         printf("Conexão estabelecida: %s\n", inet_ntoa(client_addr.sin_addr));
 
-        FILE* file = fopen("mensagens/gpt3.hl7", "r");
+        FILE* file = fopen(ARQUIVO, "r");
         if (!file) {
             perror("Falha ao abrir mensagem HL7");
             close(client_sock);
